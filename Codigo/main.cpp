@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits> 
 #include "controlador.h"
 
 int main() {
@@ -6,12 +7,18 @@ int main() {
     int opcion = 0;
 
     do {
-        std::cout << "\n=== SISTEMA DE ASISTENCIA Y HORARIOS ===" << std::endl;
+        std::cout << "\n sistema de asistencias y horarios" << std::endl;
         std::cout << "1. Menu Administrador" << std::endl;
-        std::cout << "2. Menu Docente" << std::endl;
+        std::cout << "2. Menu Profesor" << std::endl;
         std::cout << "3. Salir" << std::endl;
         std::cout << "Seleccione una opcion: ";
-        std::cin >> opcion;
+        
+        if (!(std::cin >> opcion)) {
+            std::cout << "\nError: Ingrese un numero valido (1, 2 o 3).\n";
+            std::cin.clear(); 
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descarta la entrada incorrecta
+            opcion = 0; 
+        }
 
         switch (opcion) {
             case 1:
@@ -21,10 +28,10 @@ int main() {
                 sistema.menuProfesor();
                 break;
             case 3:
-                std::cout << "Saliendo del programa..." << std::endl;
+                std::cout << "Saliendo del programa\n" << std::endl;
                 break;
             default:
-                std::cout << "Opcion invalida. Intente de nuevo." << std::endl;
+                std::cout << "Opcion invalida.\n" << std::endl;
         }
     } while (opcion != 3);
 

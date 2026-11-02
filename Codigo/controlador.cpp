@@ -329,7 +329,7 @@ void Controlador::menuAdmin() {
 void Controlador::menuProfesor() {
     int opcion = 0;
     do {
-        std::cout << "\n=== MENU PROFESOR ===" << std::endl;
+        std::cout << "\n Menu Profesor " << std::endl;
         std::cout << "1. Realizar Login y Registrar Asistencia" << std::endl;
         std::cout << "2. Volver al menu principal" << std::endl;
         opcion = leerNumeroSeguro("Seleccione una opcion: ");
