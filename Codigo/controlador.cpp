@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <ctime> // Necesario para obtener la hora actual de la computadora
 
 Controlador::Controlador() {
     cargarProfesores();
@@ -129,6 +130,7 @@ void Controlador::asignarCursoANrc() {
     std::string nrc, materia, cedulaProfesor;
     std::cout << "\n--- ASIGNAR CURSO (NRC) A PROFESOR ---\n";
 
+    // 1. Ingreso y validación del NRC
     while (true) {
         std::cout << "Ingrese el NRC del curso (solo numeros): ";
         std::cin >> nrc;
@@ -150,18 +152,37 @@ void Controlador::asignarCursoANrc() {
         }
     }
 
+    // 2. Menú numérico estricto para seleccionar la materia
+    int opcionMateria = 0;
     while (true) {
-        std::cout << "Ingrese el nombre de la materia: ";
-        std::cin.ignore();
-        std::getline(std::cin, materia);
+        std::cout << "\n--- SELECCIONE LA MATERIA ---\n";
+        std::cout << "1. Algebra Lineal\n";
+        std::cout << "2. Calculo 1\n";
+        std::cout << "3. Calculo 2\n";
+        std::cout << "4. Ecuaciones Diferenciales\n";
+        std::cout << "5. Estadistica\n";
+        std::cout << "6. Metodos Numericos\n";
+        std::cout << "7. Fisica\n";
+        
+        opcionMateria = leerNumeroSeguro("Seleccione una opcion (1-7): ");
 
-        if (!Validacion::soloLetras(materia)) {
-            std::cout << "Error: La materia debe contener solo letras y espacios.\n";
-            continue;
+        if (opcionMateria >= 1 && opcionMateria <= 7) {
+            switch (opcionMateria) {
+                case 1: materia = "Algebra Lineal"; break;
+                case 2: materia = "Calculo 1"; break;
+                case 3: materia = "Calculo 2"; break;
+                case 4: materia = "Ecuaciones Diferenciales"; break;
+                case 5: materia = "Estadistica"; break;
+                case 6: materia = "Metodos Numericos"; break;
+                case 7: materia = "Fisica"; break;
+            }
+            break;
+        } else {
+            std::cout << "Error: Opcion invalida. Por favor seleccione un numero entre 1 y 7.\n";
         }
-        break;
     }
 
+    // 3. Validación de la cédula del profesor
     while (true) {
         std::cout << "Ingrese la cedula del profesor a asignar: ";
         std::cin >> cedulaProfesor;
@@ -179,15 +200,16 @@ void Controlador::asignarCursoANrc() {
         }
     }
 
+    // 4. Creación y almacenamiento del curso
     Aula nuevoCurso(nrc, materia, cedulaProfesor);
     cursos.insertar(nuevoCurso);
     guardarCursoArchivo(nuevoCurso);
-    std::cout << "¡Curso (NRC) asignado correctamente y guardado en cursos.txt!\n";
+    std::cout << "¡Curso de " << materia << " (NRC: " << nrc << ") asignado correctamente y guardado en cursos.txt!\n";
 }
 
 void Controlador::loginProfesor() {
     std::string cedula;
-    std::cout << "\n=== LOGIN DE PROFESOR ===\n";
+    std::cout << "\n=== REGISTRO DE INGRESO (7:00 - 7:10) ===\n";
     std::cout << "Ingrese su numero de cedula: ";
     std::cin >> cedula;
 
@@ -208,7 +230,7 @@ void Controlador::loginProfesor() {
     std::cout << "Bienvenido, " << profesorActual.getNombres() << " " << profesorActual.getApellidos() << "\n";
 
     std::string nrcAula;
-    std::cout << "Ingrese el NRC del curso al que desea registrar asistencia: ";
+    std::cout << "Ingrese el NRC del curso: ";
     std::cin >> nrcAula;
 
     bool cursoValido = false;
@@ -223,9 +245,65 @@ void Controlador::loginProfesor() {
         return;
     }
 
-    // Delegamos la lógica de asistencia al objeto correspondiente
+    // Obtener la hora actual de la computadora
+    std::time_t tiempoActual = std::time(nullptr);
+    std::tm* ahora = std::localtime(&tiempoActual);
+    int horaActualMinutos = (ahora->tm_hour * 60) + ahora->tm_min;
+
+    std::cout << "\nHora actual del sistema: " 
+              << (ahora->tm_hour < 10 ? "0" : "") << ahora->tm_hour << ":" 
+              << (ahora->tm_min < 10 ? "0" : "") << ahora->tm_min << "\n";
+
+    // Franja horaria base: 7:00 (420 min) hasta 9:00 (540 min)
+    IntervaloHorario horarioClase(420, 540); 
     RegistroAsistencia registro;
-    registro.registrarIngreso(cedula, nrcAula);
+
+    if (horarioClase.esIngresoValido(horaActualMinutos)) {
+        registro.registrarIngreso(cedula, nrcAula);
+        std::cout << "¡Ingreso registrado exitosamente dentro del rango 7:00 - 7:10!\n";
+    } else {
+        std::cout << "Error: Fuera del rango permitido para registrar ingreso (7:00 - 7:10).\n";
+    }
+}
+
+void Controlador::logoutProfesor() {
+    std::string cedula;
+    std::cout << "\n=== REGISTRO DE SALIDA / DESLOGUEO (8:50 - 8:59) ===\n";
+    std::cout << "Ingrese su numero de cedula: ";
+    std::cin >> cedula;
+
+    bool profesorEncontrado = false;
+    profesores.recorrer([&cedula, &profesorEncontrado](Profesor p) {
+        if (p.getCedula() == cedula) {
+            profesorEncontrado = true;
+        }
+    });
+
+    if (!profesorEncontrado) {
+        std::cout << "Acceso denegado: Profesor no encontrado en el sistema.\n";
+        return;
+    }
+
+    std::string nrcAula;
+    std::cout << "Ingrese el NRC del curso: ";
+    std::cin >> nrcAula;
+
+    // Obtener la hora actual de la computadora
+    std::time_t tiempoActual = std::time(nullptr);
+    std::tm* ahora = std::localtime(&tiempoActual);
+    int horaActualMinutos = (ahora->tm_hour * 60) + ahora->tm_min;
+
+    std::cout << "\nHora actual del sistema: " 
+              << (ahora->tm_hour < 10 ? "0" : "") << ahora->tm_hour << ":" 
+              << (ahora->tm_min < 10 ? "0" : "") << ahora->tm_min << "\n";
+
+    IntervaloHorario horarioClase(420, 540);
+
+    if (horarioClase.esSalidaValido(horaActualMinutos)) {
+        std::cout << "¡Deslogueo y salida registrada exitosamente dentro del rango 8:50 - 8:59!\n";
+    } else {
+        std::cout << "Error: Fuera del rango permitido para desloguearse (8:50 - 8:59).\n";
+    }
 }
 
 void Controlador::menuAdmin() {
@@ -256,8 +334,9 @@ void Controlador::menuProfesor() {
     int opcion = 0;
     do {
         std::cout << "\n=== MENU PROFESOR ===" << std::endl;
-        std::cout << "1. Realizar Login y Registrar Asistencia" << std::endl;
-        std::cout << "2. Volver al menu principal" << std::endl;
+        std::cout << "1. Registrar Ingreso (7:00 - 7:10)" << std::endl;
+        std::cout << "2. Registrar Salida / Desloguearse (8:50 - 8:59)" << std::endl;
+        std::cout << "3. Volver al menu principal" << std::endl;
         opcion = leerNumeroSeguro("Seleccione una opcion: ");
 
         switch (opcion) {
@@ -265,11 +344,14 @@ void Controlador::menuProfesor() {
                 loginProfesor();
                 break;
             case 2:
+                logoutProfesor();
+                break;
+            case 3:
                 break;
             default:
                 std::cout << "Opcion invalida.\n";
         }
-    } while (opcion != 2);
+    } while (opcion != 3);
 }
 
 ListaDoble<Profesor> Controlador::getProfesores() const { return profesores; }

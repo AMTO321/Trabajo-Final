@@ -16,6 +16,11 @@ bool IntervaloHorario::estaEnFranja(int horaActualMinutos) const {
 }
 
 bool IntervaloHorario::esIngresoValido(int horaActualMinutos) const {
-    // Holgura de 10 minutos para registrar ingreso
+    
     return (horaActualMinutos >= horaInicioMinutos && horaActualMinutos <= horaInicioMinutos + 10);
+}
+
+bool IntervaloHorario::esSalidaValido(int horaActualMinutos) const {
+   
+    return (horaActualMinutos >= horaFinMinutos - 10 && horaActualMinutos <= horaFinMinutos - 1);
 }

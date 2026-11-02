@@ -17,7 +17,7 @@ public:
     void setHoraFinMinutos(int val);
     
     bool estaEnFranja(int horaActualMinutos) const;
-    bool esIngresoValido(int horaActualMinutos) const; // Con los 10 min de holgura
+    bool esIngresoValido(int horaActualMinutos) const; 
+    bool esSalidaValido(int horaActualMinutos) const;  
 };
-
 #endif

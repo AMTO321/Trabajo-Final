@@ -12,7 +12,7 @@ void RegistroAsistencia::registrarIngreso(std::string cedulaProfesor, std::strin
     cedula = cedulaProfesor;
     nrc = nrcCurso;
 
-    // Obtener la hora automáticamente del sistema
+    
     time_t ahora = time(0);
     tm* tiempoLocal = localtime(&ahora);
     int horaIngreso = tiempoLocal->tm_hour;   
@@ -21,18 +21,18 @@ void RegistroAsistencia::registrarIngreso(std::string cedulaProfesor, std::strin
     int horaActualMinutos = (horaIngreso * 60) + minutoIngreso;
     hora = (horaIngreso < 10 ? "0" : "") + std::to_string(horaIngreso) + ":" + (minutoIngreso < 10 ? "0" : "") + std::to_string(minutoIngreso);
 
-    // Validar franja horaria (07:00 a 21:00 -> 420 a 1259 minutos)
+   
     if (horaActualMinutos < 420 || horaActualMinutos > 1259) {
         std::cout << "Fuera del horario institucional de clases (07:00 a 21:00).\n";
         estado = "FUERA_DE_HORA";
         return;
     }
 
-    // Cálculo de la franja horaria de 2 horas
+  
     int inicioFranja = 420 + ((horaActualMinutos - 420) / 120) * 120;
     int finFranja = inicioFranja + 119;
 
-    // VALIDACIÓN DE CRUCE DE CLASES: Revisar si ya registró asistencia en este mismo bloque
+    
     std::ifstream archivoLectura("asistencias.txt");
     if (archivoLectura.is_open()) {
         std::string linea;
@@ -57,7 +57,7 @@ void RegistroAsistencia::registrarIngreso(std::string cedulaProfesor, std::strin
         archivoLectura.close();
     }
 
-    // Validación de puntualidad (10 minutos de holgura)
+    
     if (horaActualMinutos >= inicioFranja && horaActualMinutos <= inicioFranja + 10) {
         estado = "PUNTUAL";
         std::cout << "¡Registro exitoso! Estado: PUNTUAL (Dentro de los 10 min de holgura).\n";
@@ -69,7 +69,7 @@ void RegistroAsistencia::registrarIngreso(std::string cedulaProfesor, std::strin
         return;
     }
 
-    // Guardar automáticamente en el archivo asistencias.txt
+   
     std::ofstream archivo("asistencias.txt", std::ios::app);
     if (archivo.is_open()) {
         archivo << toString() << "\n";

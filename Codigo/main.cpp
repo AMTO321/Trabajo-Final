@@ -14,9 +14,9 @@ int main() {
         std::cout << "Seleccione una opcion: ";
         
         if (!(std::cin >> opcion)) {
-            std::cout << "\nError: Ingrese un numero valido (1, 2 o 3).\n";
+            std::cout << "\nOpcion invalida Ingrese un numero valido (1, 2 o 3).\n";
             std::cin.clear(); 
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descarta la entrada incorrecta
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
             opcion = 0; 
         }
 
@@ -30,8 +30,7 @@ int main() {
             case 3:
                 std::cout << "Saliendo del programa\n" << std::endl;
                 break;
-            default:
-                std::cout << "Opcion invalida.\n" << std::endl;
+            
         }
     } while (opcion != 3);
 
