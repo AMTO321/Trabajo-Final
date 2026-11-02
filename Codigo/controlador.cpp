@@ -40,6 +40,7 @@ void Controlador::cargarProfesores() {
     archivo.close();
 }
 
+// Guarda de forma segura añadiendo al archivo
 void Controlador::guardarProfesorArchivo(const Profesor& p) {
     std::ofstream archivo("profesores.txt", std::ios::app);
     if (archivo.is_open()) {
@@ -130,7 +131,6 @@ void Controlador::asignarCursoANrc() {
     std::string nrc, materia, cedulaProfesor;
     std::cout << "\n--- ASIGNAR CURSO (NRC) A PROFESOR ---\n";
 
-    // 1. Ingreso y validación del NRC
     while (true) {
         std::cout << "Ingrese el NRC del curso (solo numeros): ";
         std::cin >> nrc;
@@ -152,7 +152,6 @@ void Controlador::asignarCursoANrc() {
         }
     }
 
-    // 2. Menú numérico estricto para seleccionar la materia
     int opcionMateria = 0;
     while (true) {
         std::cout << "\n--- SELECCIONE LA MATERIA ---\n";
@@ -182,7 +181,6 @@ void Controlador::asignarCursoANrc() {
         }
     }
 
-    // 3. Validación de la cédula del profesor
     while (true) {
         std::cout << "Ingrese la cedula del profesor a asignar: ";
         std::cin >> cedulaProfesor;
@@ -200,7 +198,6 @@ void Controlador::asignarCursoANrc() {
         }
     }
 
-    // 4. Creación y almacenamiento del curso
     Aula nuevoCurso(nrc, materia, cedulaProfesor);
     cursos.insertar(nuevoCurso);
     guardarCursoArchivo(nuevoCurso);
@@ -245,7 +242,6 @@ void Controlador::loginProfesor() {
         return;
     }
 
-    // Obtener la hora actual de la computadora
     std::time_t tiempoActual = std::time(nullptr);
     std::tm* ahora = std::localtime(&tiempoActual);
     int horaActualMinutos = (ahora->tm_hour * 60) + ahora->tm_min;
@@ -254,7 +250,6 @@ void Controlador::loginProfesor() {
               << (ahora->tm_hour < 10 ? "0" : "") << ahora->tm_hour << ":" 
               << (ahora->tm_min < 10 ? "0" : "") << ahora->tm_min << "\n";
 
-    // Franja horaria base: 7:00 (420 min) hasta 9:00 (540 min)
     IntervaloHorario horarioClase(420, 540); 
     RegistroAsistencia registro;
 
@@ -288,14 +283,14 @@ void Controlador::logoutProfesor() {
     std::cout << "Ingrese el NRC del curso: ";
     std::cin >> nrcAula;
 
-    // Obtener la hora actual de la computadora
     std::time_t tiempoActual = std::time(nullptr);
     std::tm* ahora = std::localtime(&tiempoActual);
     int horaActualMinutos = (ahora->tm_hour * 60) + ahora->tm_min;
 
     std::cout << "\nHora actual del sistema: " 
               << (ahora->tm_hour < 10 ? "0" : "") << ahora->tm_hour << ":" 
-              << (ahora->tm_min < 10 ? "0" : "") << ahora->tm_min << "\n";
+              << (ahora->tm_min < 10 ? "0" : "") << ahora->tm_min 
+              << " (Minutos del dia: " << horaActualMinutos << ")\n";
 
     IntervaloHorario horarioClase(420, 540);
 
