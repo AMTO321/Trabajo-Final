@@ -1,33 +1,23 @@
-#ifndef REGISTROASISTENCIA_H
-#define REGISTROASISTENCIA_H
+#ifndef REGISTRO_ASISTENCIA_H
+#define REGISTRO_ASISTENCIA_H
 
 #include <string>
-#include "enumeracion.h"
 
 class RegistroAsistencia {
 private:
-    std::string fecha;
-    std::string horaIngreso;
-    std::string horaSalida;
-    EstadoAsistencia estado;
+    std::string cedula;
+    std::string nrc;
+    std::string estado;
+    std::string hora;
 
 public:
     RegistroAsistencia();
-    
-    std::string getFecha() const;
-    void setFecha(std::string newFecha);
+    RegistroAsistencia(std::string cedula, std::string nrc, std::string estado, std::string hora);
 
-    std::string getHoraIngreso() const;
-    void setHoraIngreso(std::string newHoraIngreso);
-
-    std::string getHoraSalida() const;
-    void setHoraSalida(std::string newHoraSalida);
-
-    EstadoAsistencia getEstado() const;
-    void setEstado(EstadoAsistencia newState);
-
-    void registrarIngreso();
+    void registrarIngreso(std::string cedulaProfesor, std::string nrcCurso);
     void registrarSalida();
+    
+    std::string toString() const;
 };
 
 #endif

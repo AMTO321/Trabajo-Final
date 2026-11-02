@@ -3,14 +3,12 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <ctime> // Necesario para la hora automática del sistema
 
 Controlador::Controlador() {
     cargarProfesores();
     cargarCursos();
 }
 
-// Función auxiliar robusta para leer números y evitar bucles infinitos en cin
 int leerNumeroSeguro(const std::string& mensaje) {
     std::string entrada;
     while (true) {
@@ -75,14 +73,6 @@ void Controlador::guardarCursoArchivo(const Aula& a) {
     }
 }
 
-void Controlador::guardarAsistenciaArchivo(const std::string& cedula, const std::string& nrc, const std::string& estado, const std::string& hora) {
-    std::ofstream archivo("asistencias.txt", std::ios::app);
-    if (archivo.is_open()) {
-        archivo << "Cedula: " << cedula << " | NRC: " << nrc << " | Estado: " << estado << " | Hora: " << hora << "\n";
-        archivo.close();
-    }
-}
-
 void Controlador::registrarProfesor() {
     std::string cedula, nombres, apellidos;
     std::cout << "\n--- REGISTRAR NUEVO PROFESOR ---\n";
@@ -139,7 +129,6 @@ void Controlador::asignarCursoANrc() {
     std::string nrc, materia, cedulaProfesor;
     std::cout << "\n--- ASIGNAR CURSO (NRC) A PROFESOR ---\n";
 
-    // 1. Validar NRC único y numérico
     while (true) {
         std::cout << "Ingrese el NRC del curso (solo numeros): ";
         std::cin >> nrc;
@@ -161,7 +150,6 @@ void Controlador::asignarCursoANrc() {
         }
     }
 
-    // 2. Ingresar materia (solo letras)
     while (true) {
         std::cout << "Ingrese el nombre de la materia: ";
         std::cin.ignore();
@@ -174,7 +162,6 @@ void Controlador::asignarCursoANrc() {
         break;
     }
 
-    // 3. Validar que el profesor exista por su cédula
     while (true) {
         std::cout << "Ingrese la cedula del profesor a asignar: ";
         std::cin >> cedulaProfesor;
@@ -224,7 +211,6 @@ void Controlador::loginProfesor() {
     std::cout << "Ingrese el NRC del curso al que desea registrar asistencia: ";
     std::cin >> nrcAula;
 
-    // Validar que el NRC exista y pertenezca al profesor logueado
     bool cursoValido = false;
     cursos.recorrer([&nrcAula, &cedula, &cursoValido](Aula a) {
         if (a.getNrc() == nrcAula && a.getCedulaProfesor() == cedula) {
@@ -237,69 +223,9 @@ void Controlador::loginProfesor() {
         return;
     }
 
-    // OBTENER LA HORA AUTOMÁTICAMENTE DEL SISTEMA (Sin opción a manipulación manual)
-    time_t ahora = time(0);
-    tm* tiempoLocal = localtime(&ahora);
-    int horaIngreso = tiempoLocal->tm_hour;   
-    int minutoIngreso = tiempoLocal->tm_min; 
-
-    int horaActualMinutos = (horaIngreso * 60) + minutoIngreso;
-
-    std::cout << "[Hora del Sistema Capturada Automaticamente: " 
-              << (horaIngreso < 10 ? "0" : "") << horaIngreso << ":" 
-              << (minutoIngreso < 10 ? "0" : "") << minutoIngreso << "]\n";
-
-    if (horaActualMinutos < 420 || horaActualMinutos > 1259) {
-        std::cout << "Fuera del horario institucional de clases (07:00 a 21:00).\n";
-        return;
-    }
-
-    // Cálculo de la franja horaria actual de 2 horas (07:00 - 08:59, 09:00 - 10:59, etc.)
-    int inicioFranja = 420 + ((horaActualMinutos - 420) / 120) * 120;
-    int finFranja = inicioFranja + 119;
-
-    // VALIDACIÓN DE CRUCE DE CLASES: Evita que la misma cédula se registre en dos NRCs a la misma hora
-    std::ifstream archivoLectura("asistencias.txt");
-    if (archivoLectura.is_open()) {
-        std::string linea;
-        while (std::getline(archivoLectura, linea)) {
-            if (linea.find("Cedula: " + cedula) != std::string::npos) {
-                size_t posHora = linea.find("Hora: ");
-                if (posHora != std::string::npos) {
-                    std::string horaRegStr = linea.substr(posHora + 6, 5); 
-                    size_t dosPuntos = horaRegStr.find(':');
-                    int hReg = std::stoi(horaRegStr.substr(0, dosPuntos));
-                    int mReg = std::stoi(horaRegStr.substr(dosPuntos + 1));
-                    int minRegTotal = (hReg * 60) + mReg;
-
-                    if (minRegTotal >= inicioFranja && minRegTotal <= finFranja) {
-                        std::cout << "Error de Cruce: Ya tienes una asistencia registrada en esta misma franja horaria para otro curso.\n";
-                        archivoLectura.close();
-                        return;
-                    }
-                }
-            }
-        }
-        archivoLectura.close();
-    }
-
-    IntervaloHorario franjaActual(inicioFranja, finFranja);
-    std::string estadoAsistencia = "";
-    std::string horaTexto = (horaIngreso < 10 ? "0" : "") + std::to_string(horaIngreso) + ":" + (minutoIngreso < 10 ? "0" : "") + std::to_string(minutoIngreso);
-
-    if (franjaActual.esIngresoValido(horaActualMinutos)) {
-        estadoAsistencia = "PUNTUAL";
-        std::cout << "¡Registro exitoso! Estado: PUNTUAL (Dentro de los 10 min de holgura).\n";
-    } else if (horaActualMinutos > inicioFranja + 10 && horaActualMinutos <= finFranja) {
-        estadoAsistencia = "ATRASO";
-        std::cout << "Registro exitoso con ATRASO (Fuera del margen de holgura).\n";
-    } else {
-        std::cout << "No se puede registrar asistencia. Fuera de la franja horaria correspondiente.\n";
-        return;
-    }
-
-    guardarAsistenciaArchivo(cedula, nrcAula, estadoAsistencia, horaTexto);
-    std::cout << "El registro de asistencia se guardo en asistencias.txt correctamente.\n";
+    // Delegamos la lógica de asistencia al objeto correspondiente
+    RegistroAsistencia registro;
+    registro.registrarIngreso(cedula, nrcAula);
 }
 
 void Controlador::menuAdmin() {
@@ -329,7 +255,7 @@ void Controlador::menuAdmin() {
 void Controlador::menuProfesor() {
     int opcion = 0;
     do {
-        std::cout << "\n Menu Profesor " << std::endl;
+        std::cout << "\n=== MENU PROFESOR ===" << std::endl;
         std::cout << "1. Realizar Login y Registrar Asistencia" << std::endl;
         std::cout << "2. Volver al menu principal" << std::endl;
         opcion = leerNumeroSeguro("Seleccione una opcion: ");
@@ -356,5 +282,5 @@ ListaDoble<RegistroAsistencia> Controlador::getRegistros() const { return regist
 void Controlador::setRegistros(ListaDoble<RegistroAsistencia> newRegistros) { registros = newRegistros; }
 
 void Controlador::agregarHorario(std::string nrc, DiaSemana dia, IntervaloHorario f) {
-    // Lógica adicional de horarios si se requiere
+    
 }
