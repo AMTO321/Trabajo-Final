@@ -1,2 +1,0 @@
-01,Algebra Lineal,0605293885
-02,Ecuaciones Diferenciales,0605293885

@@ -4,29 +4,40 @@
 #include <string>
 #include "enumeracion.h"
 #include "IntervaloHorario.h"
-#include "Profesor.h"
 
+// Curso identificado por su NRC: una Materia dictada por un docente en un dia y franja.
 class Aula {
 private:
     std::string nrc;
-    std::string materia;
+    std::string idMateria;
     std::string cedulaProfesor;
+    DiaSemana dia;
+    IntervaloHorario horario;
 
 public:
     Aula();
-    Aula(std::string nrc, std::string materia, std::string cedulaProfesor);
+    Aula(std::string nrc, std::string idMateria, std::string cedulaProfesor,
+         DiaSemana dia, IntervaloHorario horario);
 
     std::string getNrc() const;
     void setNrc(std::string newNrc);
 
-    std::string getMateria() const;
-    void setMateria(std::string newMateria);
+    std::string getIdMateria() const;
+    void setIdMateria(std::string newIdMateria);
 
     std::string getCedulaProfesor() const;
     void setCedulaProfesor(std::string newCedulaProfesor);
 
+    DiaSemana getDia() const;
+    void setDia(DiaSemana newDia);
+
+    IntervaloHorario getHorario() const;
+    void setHorario(IntervaloHorario newHorario);
+
     void asignarProfesor(std::string cedula);
-    bool tieneCruce(Profesor p, DiaSemana dia, IntervaloHorario f);
+
+    // true si este curso choca con el dia/franja dado para ese profesor
+    bool tieneCruce(const std::string& cedula, DiaSemana otroDia, const IntervaloHorario& f) const;
 };
 
 #endif

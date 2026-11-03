@@ -9,10 +9,11 @@ private:
     Nodo<T>* anterior;
 
 public:
-    Nodo(T dato) : dato(dato), siguiente(nullptr), anterior(nullptr) {}
+    Nodo(const T& dato) : dato(dato), siguiente(nullptr), anterior(nullptr) {}
 
     T getDato() const { return dato; }
-    void setDato(T newDato) { dato = newDato; }
+    T* getDatoPtr() { return &dato; }
+    void setDato(const T& newDato) { dato = newDato; }
 
     Nodo<T>* getSiguiente() const { return siguiente; }
     void setSiguiente(Nodo<T>* newSiguiente) { siguiente = newSiguiente; }

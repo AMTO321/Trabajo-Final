@@ -12,4 +12,4 @@ std::string Profesor::getNombres() const { return nombres; }
 void Profesor::setNombres(std::string newNombres) { nombres = newNombres; }
 
 std::string Profesor::getApellidos() const { return apellidos; }
-void Profesor::setApellidos(std::string newApellidos) { apellidos = newApellidos; }
+void Profesor::setApellidos(std::string newApellidos) { apellidos = newApellidos; }
