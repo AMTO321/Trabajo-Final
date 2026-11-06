@@ -16,13 +16,10 @@ private:
     ListaDoble<Materia> materias;
     ListaDoble<Aula> cursos;
     ListaDoble<RegistroAsistencia> registros;
-
-    // Prefijo que se antepone al nombre de los archivos (vacio por defecto; las pruebas
-    // lo usan para no tocar los archivos reales).
     std::string prefijoArchivos;
     std::string ruta(const char* nombreBase) const;
 
-    // ---- Persistencia (archivos CSV) ----
+  
     void cargarProfesores();
     void guardarProfesores() const;
     void cargarMaterias();
@@ -32,27 +29,35 @@ private:
     void cargarAsistencias();
     void guardarAsistenciaArchivo(const RegistroAsistencia& r) const;
 
-    // ---- Busquedas ----
     Profesor* buscarProfesor(const std::string& cedula);
     Materia* buscarMateria(const std::string& id);
     Aula* buscarCurso(const std::string& nrc);
     const RegistroAsistencia* buscarRegistro(const std::string& fecha, const std::string& nrc,
                                              const std::string& tipo) const;
 
-    // ---- Seleccion por numero desde una lista (0 = cancelar) ----
+    
+    const Aula* buscarChoqueDeHorario(DiaSemana dia, const IntervaloHorario& h,
+                                      const std::string& nrcExcluido) const;
+    
+    const RegistroAsistencia* buscarIngresoDeOtroProfesor(const std::string& fecha, const std::string& cedula,
+                                                          const IntervaloHorario& h) const;
+
+    
     Profesor* seleccionarProfesor();
-    Materia* seleccionarMateria();
+    
+    bool seleccionarMateriaDeCatalogo(Materia& materia);
     Aula* seleccionarCurso();
     Profesor* identificarProfesor();
     Aula* seleccionarCursoDeProfesor(const Profesor& p);
 
-    // ---- Utilidades ----
+    
     bool pedirDiaYFranja(const std::string& cedula, const std::string& nrcExcluido,
                          DiaSemana& dia, IntervaloHorario& horario);
     std::string nombreMateria(const std::string& id);
     std::string nombreProfesor(const std::string& cedula);
     void mostrarEstadoReloj() const;
     void registrarMarcado(bool esIngreso);
+    void pruebaDeHora(bool esIngreso);   // comun a pruebaLogin / pruebaLogout
 
 public:
     explicit Controlador(const std::string& prefijoArchivos = "");
@@ -62,32 +67,26 @@ public:
     const ListaDoble<Aula>& getCursos() const;
     const ListaDoble<RegistroAsistencia>& getRegistros() const;
 
-    // Menus
+
     void menuAdmin();
     void menuProfesor();
     void menuListados();
-
-    // Administracion
+    void menuHorasDePrueba();   
     void registrarProfesor();
-    void registrarMateria();
-    void crearCursoConNrc();        // genera el NRC automaticamente
-    void cambiarHorarioCurso();
+    void crearCursoConNrc();       
     void eliminarCurso();
     void eliminarProfesor();
-    void reporteAsistencias();
 
-    // Listados
+
     void listarProfesores();
     void listarMaterias();
     void listarCursos();
 
-    // Profesor
-    void loginProfesor();     // Registro de ingreso
-    void logoutProfesor();    // Registro de salida
+    void loginProfesor();     
+    void logoutProfesor();    
     void verMisCursos();
-
-    // Cambia dia/franja de un curso validando cruces. false si hay choque.
-    bool agregarHorario(const std::string& nrc, DiaSemana dia, const IntervaloHorario& f);
+    void pruebaLogin();       
+    void pruebaLogout();     
 };
 
 #endif

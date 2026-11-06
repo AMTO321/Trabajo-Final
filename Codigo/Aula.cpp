@@ -26,5 +26,9 @@ void Aula::asignarProfesor(std::string cedula) {
 }
 
 bool Aula::tieneCruce(const std::string& cedula, DiaSemana otroDia, const IntervaloHorario& f) const {
-    return cedulaProfesor == cedula && dia == otroDia && horario.seCruzaCon(f);
+    return cedulaProfesor == cedula && ocupaHorario(otroDia, f);
+}
+
+bool Aula::ocupaHorario(DiaSemana otroDia, const IntervaloHorario& f) const {
+    return dia == otroDia && horario.seCruzaCon(f);
 }

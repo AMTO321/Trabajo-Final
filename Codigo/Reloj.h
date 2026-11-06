@@ -5,13 +5,12 @@
 #include "enumeracion.h"
 
 struct Instante {
-    std::string fecha;  // AAAA-MM-DD
-    int minutos;        // minutos desde las 00:00
-    int diaSemana;      // 0 = domingo ... 6 = sabado
+    std::string fecha;  
+    int minutos;        
+    int diaSemana;      
 };
 
-// Fuente unica de fecha/hora del sistema. Permite simular una fecha/hora
-// para poder probar el sistema fuera del horario de clases.
+
 class Reloj {
 private:
     static bool simulando;

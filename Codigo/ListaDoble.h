@@ -6,9 +6,6 @@
 #include <functional>
 #include <utility>
 
-// Lista doblemente enlazada generica.
-// Maneja su propia memoria: destructor, constructor de copia (copia profunda)
-// y operador de asignacion, para evitar fugas y doble liberacion.
 template <typename T>
 class ListaDoble {
 private:
@@ -76,8 +73,7 @@ public:
         tamanio++;
     }
 
-    // Devuelve una copia del primer elemento que cumple el criterio
-    // (o T() si no hay ninguno; para distinguir "no existe" usar buscarPtr/existe).
+
     T buscar(std::function<bool(const T&)> criterio) const {
         Nodo<T>* actual = cabeza;
         while (actual) {
@@ -87,7 +83,7 @@ public:
         return T();
     }
 
-    // Devuelve un puntero al elemento dentro de la lista (nullptr si no existe).
+    
     T* buscarPtr(std::function<bool(const T&)> criterio) {
         Nodo<T>* actual = cabeza;
         while (actual) {
@@ -106,7 +102,6 @@ public:
         return nullptr;
     }
 
-    // Elemento en la posicion indice (0 = primero). nullptr si esta fuera de rango.
     T* obtenerPtr(size_t indice) {
         if (indice >= tamanio) return nullptr;
         Nodo<T>* actual = cabeza;
@@ -128,7 +123,7 @@ public:
         return total;
     }
 
-    // Elimina el primer elemento que cumple el criterio. Devuelve true si elimino algo.
+    
     bool eliminar(std::function<bool(const T&)> criterio) {
         Nodo<T>* actual = cabeza;
         while (actual) {
@@ -161,7 +156,6 @@ public:
         }
     }
 
-    // Ordenamiento por insercion (estable). menorQue(a, b) = true si a va antes que b.
     void ordenar(std::function<bool(const T&, const T&)> menorQue) {
         if (!cabeza) return;
         for (Nodo<T>* i = cabeza->getSiguiente(); i; i = i->getSiguiente()) {

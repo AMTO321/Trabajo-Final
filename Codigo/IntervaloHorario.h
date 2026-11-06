@@ -3,8 +3,6 @@
 
 #include <string>
 
-// Franja horaria en minutos desde las 00:00. Rango [inicio, fin).
-// Las clases se dictan en 7 franjas fijas de 2 horas entre 07:00 y 21:00.
 class IntervaloHorario {
 private:
     int horaInicioMinutos;
@@ -20,17 +18,17 @@ public:
     int getHoraFinMinutos() const;
     void setHoraFinMinutos(int val);
 
-    bool estaEnFranja(int horaActualMinutos) const;      // inicio <= t < fin
-    bool esIngresoValido(int horaActualMinutos) const;   // puntual: primeros 10 min
-    bool esIngresoPermitido(int horaActualMinutos) const;// desde inicio hasta antes de la ventana de salida
-    bool esSalidaValido(int horaActualMinutos) const;    // ultimos 10 min de la clase
+    bool estaEnFranja(int horaActualMinutos) const;      
+    bool esIngresoValido(int horaActualMinutos) const;   
+    bool esIngresoPermitido(int horaActualMinutos) const;
+    bool esSalidaValido(int horaActualMinutos) const;    
     bool seCruzaCon(const IntervaloHorario& otro) const;
     bool esFranjaOficial() const;
 
-    std::string toString() const;                        // "07:00 - 09:00"
+    std::string toString() const;                       
 
     static int totalFranjas();
-    static IntervaloHorario franja(int numero);          // numero 1..totalFranjas()
-    static std::string textoHora(int minutos);           // 425 -> "07:05"
+    static IntervaloHorario franja(int numero);          
+    static std::string textoHora(int minutos);           
 };
 #endif

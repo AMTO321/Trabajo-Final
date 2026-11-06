@@ -132,8 +132,10 @@ bool Validacion::validarIdMateria(const std::string& id) {
     return true;
 }
 
+// El NRC es un numero entero positivo cualquiera: solo digitos, de 1 a 9 cifras y sin ceros a la
+// izquierda (asi "7" y "07" no pueden coexistir como NRC distintos; el 0 queda libre para "cancelar").
 bool Validacion::validarNrc(const std::string& nrc) {
-    return nrc.size() == 5 && soloNumeros(nrc) && std::stoi(nrc) >= 10001;
+    return soloNumeros(nrc) && nrc.size() <= 9 && nrc[0] != '0';
 }
 
 bool Validacion::validarFecha(const std::string& fecha) {
@@ -154,6 +156,44 @@ bool Validacion::parsearHora(const std::string& texto, int& minutos) {
     if (!soloNumeros(h) || !soloNumeros(m)) return false;
     int hh = std::stoi(h), mm = std::stoi(m);
     if (hh > 23 || mm > 59) return false;
+    minutos = hh * 60 + mm;
+    return true;
+}
+
+bool Validacion::parsearHoraFlexible(const std::string& texto, int& minutos) {
+    std::string s;
+    for (size_t i = 0; i < texto.size(); i++) {
+        unsigned char c = static_cast<unsigned char>(texto[i]);
+        if (c == ' ' || c == '\t') continue;
+        s += static_cast<char>(std::tolower(c));
+    }
+    int sufijo = 0;                        // 0 = sin sufijo, 1 = am, 2 = pm
+    if (s.size() >= 2) {
+        std::string fin = s.substr(s.size() - 2);
+        if (fin == "am") sufijo = 1;
+        else if (fin == "pm") sufijo = 2;
+        if (sufijo != 0) s = s.substr(0, s.size() - 2);
+    }
+    if (s.empty()) return false;
+
+    std::string hs = s, ms = "00";
+    size_t dp = s.find(':');
+    if (dp != std::string::npos) {
+        hs = s.substr(0, dp);
+        ms = s.substr(dp + 1);
+        if (ms.size() != 2) return false;
+    }
+    if (hs.empty() || hs.size() > 2 || !soloNumeros(hs) || !soloNumeros(ms)) return false;
+
+    int hh = std::stoi(hs), mm = std::stoi(ms);
+    if (mm > 59) return false;
+    if (sufijo != 0) {
+        if (hh < 1 || hh > 12) return false;
+        if (sufijo == 1) hh = (hh == 12) ? 0 : hh;
+        else hh = (hh == 12) ? 12 : hh + 12;
+    } else if (hh > 23) {
+        return false;
+    }
     minutos = hh * 60 + mm;
     return true;
 }

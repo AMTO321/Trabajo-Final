@@ -3,7 +3,7 @@
 
 #include <string>
 
-// Plantilla de una asignatura (ej. ALGE101 - Algebra Lineal - 4 creditos).
+
 class Materia {
 private:
     std::string id;

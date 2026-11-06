@@ -1,9 +1,9 @@
 #include "IntervaloHorario.h"
 
 namespace {
-const int PRIMERA_FRANJA_INICIO = 420; // 07:00
-const int DURACION_FRANJA = 120;       // 2 horas
-const int NUM_FRANJAS = 7;             // 07-09, 09-11, ..., 19-21
+const int PRIMERA_FRANJA_INICIO = 420; 
+const int DURACION_FRANJA = 120;       
+const int NUM_FRANJAS = 7;            
 }
 
 IntervaloHorario::IntervaloHorario() : horaInicioMinutos(0), horaFinMinutos(0) {}

@@ -16,12 +16,12 @@ int Entrada::leerEntero(const std::string& mensaje, int minimo, int maximo) {
     while (true) {
         std::string texto = leerLinea(mensaje);
         if (!Validacion::soloNumeros(texto) || texto.size() > 9) {
-            std::cout << "Error: ingrese un numero entero entre " << minimo << " y " << maximo << ".\n";
+            std::cout << " ingrese un numero entero entre " << minimo << " y " << maximo << ".\n";
             continue;
         }
         int valor = std::stoi(texto);
         if (valor < minimo || valor > maximo) {
-            std::cout << "Error: el valor debe estar entre " << minimo << " y " << maximo << ".\n";
+            std::cout << "el valor debe estar entre " << minimo << " y " << maximo << ".\n";
             continue;
         }
         return valor;
@@ -33,6 +33,6 @@ bool Entrada::confirmar(const std::string& mensaje) {
         std::string r = Validacion::aMayusculas(leerLinea(mensaje + " (s/n): "));
         if (r == "S" || r == "SI") return true;
         if (r == "N" || r == "NO") return false;
-        std::cout << "Error: responda 's' o 'n'.\n";
+        std::cout << " responda 's' o 'n'.\n";
     }
 }

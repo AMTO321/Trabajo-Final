@@ -9,7 +9,7 @@ int main() {
         int opcion = 0;
 
         do {
-            std::cout << "\n=== SISTEMA DE ASISTENCIAS Y HORARIOS ===" << std::endl;
+            std::cout << "\n Programa de asistencias y horarios" << std::endl;
             std::cout << "1. Menu Administrador" << std::endl;
             std::cout << "2. Menu Profesor" << std::endl;
             std::cout << "3. Salir" << std::endl;
@@ -28,7 +28,7 @@ int main() {
             }
         } while (opcion != 3);
     } catch (const std::runtime_error&) {
-        // La entrada se cerro (Ctrl+Z / Ctrl+D): salida ordenada
+        
         std::cout << "\nEntrada finalizada. Cerrando el sistema.\n";
     }
     return 0;

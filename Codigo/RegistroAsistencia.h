@@ -3,14 +3,14 @@
 
 #include <string>
 
-// Un marcado de asistencia: ENTRADA (PUNTUAL/ATRASO) o SALIDA (REGISTRADA).
+
 class RegistroAsistencia {
 private:
-    std::string fecha;   // AAAA-MM-DD
-    std::string hora;    // HH:MM
+    std::string fecha;   
+    std::string hora;    
     std::string cedula;
     std::string nrc;
-    std::string tipo;    // ENTRADA | SALIDA
+    std::string tipo;    
     std::string estado;
 
 public:
@@ -25,8 +25,8 @@ public:
     std::string getTipo() const;
     std::string getEstado() const;
 
-    std::string toCsv() const;      // fecha,hora,cedula,nrc,tipo,estado
-    std::string toString() const;   // para mostrar en pantalla
+    std::string toCsv() const;      
+    std::string toString() const;   
 };
 
 #endif
